@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "default": "ddd-dashboard",
+    "dev": "ddd-dashboard",
+    "prod": "ddd-dashboard"
+  }
+}

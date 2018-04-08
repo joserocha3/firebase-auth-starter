@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="JavaScriptLibraryMappings">
+    <file url="file://$PROJECT_DIR$/client" libraries="{firebase-auth-starter/client/node_modules}" />
+    <file url="PROJECT" libraries="{@types/rebass, firebase-DefinitelyTyped, firebase-auth-starter/client/node_modules, firebase-auth-starter/server/node_modules, prop-types-DefinitelyTyped, react-DefinitelyTyped, react-router-DefinitelyTyped}" />
+  </component>
+</project>
