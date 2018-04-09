@@ -37,7 +37,7 @@ class SignInForm extends Component {
     const {email, password} = this.state
     const {history} = this.props
 
-    auth.doSignInWithEmailAndPassword(email, password)
+    auth.signInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState(() => ({...INITIAL_STATE}))
         history.push(routes.HOME)
@@ -51,7 +51,10 @@ class SignInForm extends Component {
 
   render () {
     const {email, password, error} = this.state
-    const isInvalid = password === '' || email === ''
+    const isInvalid =
+            password === '' ||
+            email === '' ||
+            password.length < 6
 
     return (
       <form onSubmit={this.onSubmit}>
@@ -72,7 +75,7 @@ class SignInForm extends Component {
         <Button disabled={isInvalid} type='submit'>
           Sign In
         </Button>
-        {error && <Text>{error.message}</Text>}
+        {error && <Text color='error' mt={3}>{error.message}</Text>}
       </form>
     )
   }

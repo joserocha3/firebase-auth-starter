@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Input } from 'rebass'
+import { Button, Input, Text } from 'rebass'
 
 import { auth } from '../../../firebase/index'
 
@@ -15,7 +15,7 @@ class PasswordChangeForm extends Component {
   onSubmit = (event) => {
     const {passwordOne} = this.state
 
-    auth.doPasswordUpdate(passwordOne)
+    auth.passwordUpdate(passwordOne)
       .then(() => {
         this.setState(() => ({...INITIAL_STATE}))
       })
@@ -50,7 +50,7 @@ class PasswordChangeForm extends Component {
           Reset My Password
         </Button>
 
-        {error && <p>{error.message}</p>}
+        {error && <Text color='error' mt={3}>{error.message}</Text>}
       </form>
     )
   }

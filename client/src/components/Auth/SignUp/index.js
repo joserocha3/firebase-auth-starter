@@ -29,27 +29,31 @@ const INITIAL_STATE = {
 class SignUpForm extends Component {
   state = {...INITIAL_STATE}
 
-  onSubmit = async (event) => {
+  _onSubmit = async (event) => {
+    event.preventDefault()
+
     const {email, passwordOne} = this.state
     const {history} = this.props
 
     try {
-      await auth.doCreateUserWithEmailAndPassword(email, passwordOne)
+      await auth.createUserWithEmailAndPassword(email, passwordOne)
       this.setState(() => ({...INITIAL_STATE}))
-      history.push(routes.HOME)
+      history && history.push(routes.HOME)
     } catch (error) {
       this.setState({error})
     }
-
-    event.preventDefault()
   }
 
   render () {
     const {email, passwordOne, passwordTwo, error} = this.state
-    const isInvalid = passwordOne !== passwordTwo || passwordOne === '' || email === ''
+    const isInvalid =
+            passwordOne !== passwordTwo ||
+            passwordOne === '' ||
+            email === '' ||
+            passwordOne.length < 6
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this._onSubmit}>
         <Input
           mb={3}
           value={email}
@@ -75,7 +79,7 @@ class SignUpForm extends Component {
           Sign Up
         </Button>
 
-        {error && <Text>{error.message}</Text>}
+        {error && <Text mt={3} color='error'>{error.message}</Text>}
       </form>
     )
   }

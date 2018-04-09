@@ -3,10 +3,11 @@ import { Button } from 'rebass'
 
 import { auth } from '../../../firebase/index'
 
-const SignOutButton = () =>
+const SignOutButton = ({...others}) =>
   <Button
     type='button'
-    onClick={auth.doSignOut}>
+    onClick={auth.signOut}
+    {...others}>
     Sign Out
   </Button>
 

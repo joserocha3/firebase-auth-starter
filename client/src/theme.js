@@ -1,6 +1,6 @@
 // import theme from 'rebass/dist/theme.js'
 
-const defaultTheme = {
+const theme = {
   'breakpoints': [
     '32em',
     '48em',
@@ -48,8 +48,7 @@ const defaultTheme = {
     ],
     'dark': 'rgba(0, 0, 0, 0.75)',
     'gray': '#eee',
-    'blue': '#f7705b',
-    'primary': '#f7705b',
+    'blue': '#326cf7',
     'indigo': '#1000ee',
     'violet': '#8700ee',
     'fuschia': '#ee00de',
@@ -74,17 +73,10 @@ const defaultTheme = {
   ]
 }
 
-const customTheme = {
-  fonts: {
-    0: 'system-ui, sans-serif',
-    sans: '"Avenir Next", Helvetica, sans-serif',
-    mono: '"SF Mono", "Roboto Mono", Menlo, monospace'
-  }
-}
+theme.fonts['sans'] = 'Nunito, Helvetica, sans-serif'
 
-const theme = {
-  ...defaultTheme,
-  ...customTheme
-}
+theme.colors['blue'] = '#f7705b'
+theme.colors['primary'] = '#f7705b'
+theme.colors['error'] = '#ba2219'
 
 export default theme

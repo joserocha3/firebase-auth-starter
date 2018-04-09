@@ -1,16 +1,17 @@
 import React from 'react'
+import { Heading, Text } from 'rebass'
 
 import AuthUserContext from '../Session/AuthUserContext'
-import { ForgotForm } from '../Auth/Forgot'
-import { PasswordChangeForm } from '../Auth/Password'
+import { PasswordChangeForm } from '../Auth/PasswordChange'
 import withAuthorization from '../Session/withAuthorization'
 
 const AccountPage = () =>
   <AuthUserContext.Consumer>
     {authUser =>
       <div>
-        <h1>Account: {authUser.email}</h1>
-        <ForgotForm />
+        <Heading mb={3} is='h3'>Profile</Heading>
+        <Text>Email: {authUser.email}</Text>
+        <Heading my={3} is='h3'>Change Password</Heading>
         <PasswordChangeForm />
       </div>
     }

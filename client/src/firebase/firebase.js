@@ -1,5 +1,6 @@
 import * as firebase from 'firebase'
 import '@firebase/firestore'
+import '@firebase/functions'
 
 // const prodConfig = {
 //   apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
@@ -38,11 +39,14 @@ if (!firebase.apps.length) {
 
 const auth = firebase.auth()
 const db = firebase.firestore()
+const functions = firebase.functions()
 
 window.auth = auth
 window.db = db
+window.functions = functions
 
 export {
   db,
-  auth
+  auth,
+  functions
 }

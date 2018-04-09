@@ -1,39 +1,39 @@
 import React from 'react'
-import { BrowserRouter as Router, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Provider } from 'rebass'
 import { injectGlobal } from 'styled-components'
-import reset from 'styled-reset'
+import { normalize } from 'styled-normalize'
 
 import Navigation from '../Navigation'
 import SignUpPage from '../Auth/SignUp'
 import SignInPage from '../Auth/SignIn'
 import PasswordForgetPage from '../Auth/Forgot'
 import HomePage from '../Home'
-import UsersPage from '../Users'
+import UsersPage from '../Auth/Create/index'
 import AccountPage from '../Account'
+import NoMatchPage from '../NoMatch'
 import withAuthentication from '../Session/withAuthentication'
 import theme from '../../theme'
 import * as routes from '../../constants/routes'
 
+// noinspection CssUnknownTarget
 injectGlobal`
-  ${reset}
+  ${normalize}
+  
+  @import url('https://fonts.googleapis.com/css?family=Nunito');
   
   html {
-    height: 100%;
     box-sizing: border-box; 
+    font-family: 'Nunito', sans-serif;
   }
-  
-  #root, body {
-    height: 100%;
+
+  *, *:before, *:after {
+    box-sizing: inherit;
   }
   
   a {
     color: inherit;
     text-decoration: none;
-  }
-  
-  *, *:before, *:after {
-    box-sizing: inherit;
   }
 `
 
@@ -42,12 +42,15 @@ const App = () =>
     <Provider theme={theme}>
       <Navigation />
 
-      <Route exact path={routes.SIGN_UP} component={() => <SignUpPage />} />
-      <Route exact path={routes.LOGIN} component={() => <SignInPage />} />
-      <Route exact path={routes.FORGOT} component={() => <PasswordForgetPage />} />
-      <Route exact path={routes.HOME} component={() => <HomePage />} />
-      <Route exact path={routes.ACCOUNT} component={() => <AccountPage />} />
-      <Route exact path={routes.USERS} component={() => <UsersPage />} />
+      <Switch>
+        <Route strict exact path={routes.HOME} component={HomePage} />
+        <Route strict path={routes.ACCOUNT} component={AccountPage} />
+        <Route strict path={routes.USERS} component={UsersPage} />
+        <Route strict path={routes.SIGN_UP} component={SignUpPage} />
+        <Route strict path={routes.LOGIN} component={SignInPage} />
+        <Route strict path={routes.FORGOT} component={PasswordForgetPage} />
+        <Route component={NoMatchPage} />
+      </Switch>
 
     </Provider>
   </Router>

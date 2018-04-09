@@ -30,13 +30,9 @@ class ForgotForm extends Component {
   onSubmit = (event) => {
     const {email} = this.state
 
-    auth.doPasswordReset(email)
-      .then(() => {
-        this.setState(() => ({...INITIAL_STATE}))
-      })
-      .catch(error => {
-        this.setState({error})
-      })
+    auth.passwordReset(email)
+      .then(() => this.setState({...INITIAL_STATE}))
+      .catch(error => this.setState({error}))
 
     event.preventDefault()
   }
@@ -54,11 +50,12 @@ class ForgotForm extends Component {
           type='text'
           placeholder='Email Address'
         />
+
         <Button disabled={isInvalid} type='submit'>
           Reset My Password
         </Button>
 
-        {error && <p>{error.message}</p>}
+        {error && <Text mt={3} color='error'>{error.message}</Text>}
       </form>
     )
   }
