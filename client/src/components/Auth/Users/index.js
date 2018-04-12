@@ -1,17 +1,19 @@
 import React, { Component } from 'react'
-import { Box, Button, Heading, Input, Select, Text } from 'rebass'
+import { Button, Heading, Input, Select, Text } from 'rebass'
 
 import withAuthorization from '../Session/withAuthorization'
+import UserList from './UserList'
 import { auth, db } from '../../../firebase/index'
 
 class UsersPage extends Component {
   state = {
-    users: {}
+    users: []
   }
 
   unsubscribeToUsers = null
 
-  _setUsers = (users) => this.setState({users})
+  _setUsers = (users) =>
+    this.setState({users})
 
   componentDidMount () {
     this.unsubscribeToUsers = db.subscribeToUsers(this._setUsers)
@@ -33,28 +35,15 @@ class UsersPage extends Component {
   }
 }
 
-const UserList = ({users}) =>
-  <React.Fragment>
-    <Heading mb={3}>Existing Users</Heading>
-    {!users.keys
-      ? <Text>Loading...</Text>
-      : Object.keys(users).map(key =>
-        <Box key={key} mb={3}>
-          <Text mb={3}>{users[key].email}</Text>
-          <SelectRole value={users[key].role || ''} onChange={() => null} />
-        </Box>
-      )
-    }
-  </React.Fragment>
-
 const UserCreate = () =>
   <React.Fragment>
     <Heading my={3}>Create a User</Heading>
     <CreateForm />
   </React.Fragment>
 
-const SelectRole = ({value, onChange}) =>
+const SelectRole = ({value, onChange, disabled}) =>
   <Select
+    disabled={!!disabled}
     value={value}
     onChange={onChange}>
     <option value='' disabled defaultValue>Select a role</option>
@@ -142,3 +131,7 @@ class CreateForm extends Component {
 const condition = (user) => user.admin
 
 export default withAuthorization(condition)(UsersPage)
+
+export {
+  SelectRole
+}

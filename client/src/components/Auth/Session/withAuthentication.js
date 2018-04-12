@@ -1,9 +1,7 @@
 import React from 'react'
-import { withRouter } from 'react-router-dom'
 
 import AuthContext from './AuthContext'
 import { firebase } from '../../../firebase/index'
-import * as routes from '../../../constants/routes'
 
 const INITIAL_STATE = {
   uid: '',

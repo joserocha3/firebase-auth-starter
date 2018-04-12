@@ -10,7 +10,10 @@ export const subscribeToCollection = (collection, onUpdate) => {
     const data = []
 
     query.forEach(doc =>
-      data[doc.id] = {...doc.data()}
+      data[doc.id] = {
+        uid: doc.id,
+        ...doc.data()
+      }
     )
 
     onUpdate(data)
@@ -23,7 +26,10 @@ export const getCollection = async collection => {
   try {
     const query = await db.collection(collection).get()
     !!query && query.forEach(doc =>
-      data[doc.id] = {...doc.data()}
+      data[doc.id] = {
+        uid: doc.id,
+        ...doc.data()
+      }
     )
   } catch (error) {
     console.log(error)

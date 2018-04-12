@@ -101,14 +101,14 @@ exports.assignRole = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('permission-denied', 'Only admins can assign roles.')
   }
 
-  if (uid === context.auth.uid) {
+  if (data.uid === context.auth.uid) {
     throw new functions.https.HttpsError('failed-precondition', 'You cannot change your own role.')
   }
 
   // Now assign the role
 
   try {
-    await admin.auth().setCustomUserClaims(uid, {[data.role]: true})
+    await admin.auth().setCustomUserClaims(data.uid, {[data.role]: true})
   } catch (error) {
     console.error(error)
     throw new functions.https.HttpsError('unknown', 'Failed to assign user role.')
