@@ -2,23 +2,20 @@ import React from 'react'
 import { Link, withRouter } from 'react-router-dom'
 import { Tab, Tabs } from 'rebass'
 
-import AuthUserContext from '../Session/AuthUserContext'
+import withAuthorization from '../Auth/Session/withAuthorization'
 import SignOutButton from '../Auth/SignOut'
 import * as routes from '../../constants/routes'
 
-const Navigation = () =>
-  <AuthUserContext.Consumer>
-    {authUser => authUser
-      ? <NavigationAuth />
-      : <NavigationNonAuth />
-    }
-  </AuthUserContext.Consumer>
+const Navigation = ({uid, admin}) =>
+  uid
+    ? <NavigationAuth admin={!!admin} />
+    : <NavigationNonAuth />
 
-const NavigationAuth = () =>
+const NavigationAuth = ({admin}) =>
   <Tabs mb={3}>
     <Item to={routes.HOME}>Home</Item>
     <Item to={routes.ACCOUNT}>Account</Item>
-    <Item to={routes.USERS}>Users</Item>
+    {admin && <Item to={routes.USERS}>Users</Item>}
     <SignOutButton ml='auto' />
   </Tabs>
 
@@ -30,4 +27,4 @@ const Item = withRouter(({to, children, location: {pathname}}) =>
 
 const NavigationNonAuth = () => null
 
-export default Navigation
+export default withAuthorization()(Navigation)

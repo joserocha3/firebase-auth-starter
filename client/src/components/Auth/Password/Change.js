@@ -6,32 +6,37 @@ import { auth } from '../../../firebase/index'
 const INITIAL_STATE = {
   passwordOne: '',
   passwordTwo: '',
-  error: null
+  error: null,
+  busy: false
 }
 
 class PasswordChangeForm extends Component {
   state = {...INITIAL_STATE}
 
-  onSubmit = (event) => {
+  _onSubmit = async (event) => {
+    event.preventDefault()
+
     const {passwordOne} = this.state
 
-    auth.passwordUpdate(passwordOne)
-      .then(() => {
-        this.setState(() => ({...INITIAL_STATE}))
-      })
-      .catch(error => {
-        this.setState({error})
-      })
+    this.setState({busy: true})
 
-    event.preventDefault()
+    try {
+      await auth.passwordUpdate(passwordOne)
+      this.setState(() => ({...INITIAL_STATE}))
+    } catch (error) {
+      this.setState({error, busy: true})
+    }
   }
 
+  _isValid = () =>
+    this.state.passwordOne !== '' &&
+    this.state.passwordOne === this.state.passwordTwo
+
   render () {
-    const {passwordOne, passwordTwo, error} = this.state
-    const isInvalid = passwordOne !== passwordTwo || passwordOne === ''
+    const {passwordOne, passwordTwo, error, busy} = this.state
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this._onSubmit}>
         <Input
           mb={3}
           value={passwordOne}
@@ -46,7 +51,8 @@ class PasswordChangeForm extends Component {
           type='password'
           placeholder='Confirm New Password'
         />
-        <Button disabled={isInvalid} type='submit'>
+
+        <Button disabled={!this._isValid() || busy} type='submit'>
           Reset My Password
         </Button>
 

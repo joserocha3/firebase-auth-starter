@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Button, Heading, Input, Select, Text } from 'rebass'
 
-import withAuthorization from '../../Session/withAuthorization'
+import withAuthorization from '../Session/withAuthorization'
 import { auth, db } from '../../../firebase/index'
 
 class UsersPage extends Component {
@@ -31,7 +31,9 @@ const UserList = ({users}) =>
   <React.Fragment>
     <Heading mb={3}>Existing Users</Heading>
     {Object.keys(users).map(key =>
-      <Text key={key}>{users[key].email}</Text>
+      <React.Fragment key={key}>
+        <Text>{users[key].email}</Text>
+      </React.Fragment>
     )}
   </React.Fragment>
 
@@ -41,12 +43,22 @@ const UserCreate = () =>
     <CreateForm />
   </React.Fragment>
 
+const SelectRole = ({value, onChange}) =>
+  <Select
+    value={value}
+    onChange={onChange}>
+    <option value='' disabled defaultValue>Select a role</option>
+    <option>client</option>
+    <option>admin</option>
+  </Select>
+
 const INITIAL_STATE = {
   email: '',
   passwordOne: '',
   passwordTwo: '',
   role: '',
-  error: null
+  error: null,
+  busy: false
 }
 
 class CreateForm extends Component {
@@ -57,23 +69,25 @@ class CreateForm extends Component {
 
     const {email, passwordOne, role} = this.state
 
+    this.setState({busy: true})
+
     try {
       await auth.createUser(email, passwordOne, role)
       this.setState(() => ({...INITIAL_STATE}))
     } catch (error) {
-      console.log(error)
-      this.setState({error})
+      this.setState({error, busy: false})
     }
   }
 
+  _isValid = () =>
+    this.state.email !== '' &&
+    this.state.passwordOne !== '' &&
+    this.state.passwordOne === this.state.passwordTwo &&
+    this.state.passwordOne.length > 5 &&
+    this.state.role !== ''
+
   render () {
-    const {email, passwordOne, passwordTwo, role, error} = this.state
-    const isInvalid =
-            passwordOne !== passwordTwo ||
-            passwordOne === '' ||
-            email === '' ||
-            role === '' ||
-            passwordOne.length < 6
+    const {email, passwordOne, passwordTwo, role, error, busy} = this.state
 
     return (
       <form onSubmit={this._onSubmit}>
@@ -83,6 +97,7 @@ class CreateForm extends Component {
           onChange={event => this.setState({email: event.target.value})}
           type='email'
           placeholder='Email Address'
+          name='email'
         />
         <Input
           mb={3}
@@ -99,15 +114,12 @@ class CreateForm extends Component {
           placeholder='Confirm Password'
         />
 
-        <Select
+        <SelectRole
           value={role}
-          onChange={event => this.setState({role: event.target.value})}>
-          <option value='' disabled selected>Select your option</option>
-          <option>client</option>
-          <option>admin</option>
-        </Select>
+          onChange={event => this.setState({role: event.target.value})}
+        />
 
-        <Button mt={3} disabled={isInvalid} type='submit'>
+        <Button mt={3} disabled={!this._isValid() || busy} type='submit'>
           Sign Up
         </Button>
 
@@ -117,4 +129,6 @@ class CreateForm extends Component {
   }
 }
 
-export default withAuthorization()(UsersPage)
+const condition = (user) => user.admin
+
+export default withAuthorization(condition)(UsersPage)

@@ -27,43 +27,47 @@ const Footer = () =>
 const INITIAL_STATE = {
   email: '',
   password: '',
-  error: null
+  error: null,
+  busy: false
 }
 
 class SignInForm extends Component {
   state = {...INITIAL_STATE}
 
-  onSubmit = (event) => {
+  _onSubmit = async (event) => {
+    event.preventDefault()
+
     const {email, password} = this.state
     const {history} = this.props
 
-    auth.signInWithEmailAndPassword(email, password)
-      .then(() => {
-        this.setState(() => ({...INITIAL_STATE}))
-        history.push(routes.HOME)
-      })
-      .catch(error => {
-        this.setState({error})
-      })
+    this.setState({busy: true})
 
-    event.preventDefault()
+    try {
+      await auth.signInWithEmailAndPassword(email, password)
+      this.setState(() => ({...INITIAL_STATE}))
+      history.push(routes.HOME)
+    } catch (error) {
+      this.setState({error, busy: false})
+    }
   }
 
+  _isValid = () =>
+    this.state.email !== '' &&
+    this.state.password !== '' &&
+    this.state.password.length > 5
+
   render () {
-    const {email, password, error} = this.state
-    const isInvalid =
-            password === '' ||
-            email === '' ||
-            password.length < 6
+    const {email, password, error, busy} = this.state
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this._onSubmit}>
         <Input
           mb={3}
           value={email}
           onChange={event => this.setState({email: event.target.value})}
           type='text'
           placeholder='Email Address'
+          name='email'
         />
         <Input
           mb={3}
@@ -72,9 +76,11 @@ class SignInForm extends Component {
           type='password'
           placeholder='Password'
         />
-        <Button disabled={isInvalid} type='submit'>
+
+        <Button disabled={!this._isValid() || busy} type='submit'>
           Sign In
         </Button>
+
         {error && <Text color='error' mt={3}>{error.message}</Text>}
       </form>
     )

@@ -1,20 +1,9 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Heading } from 'rebass'
 
-import AuthUserContext from '../Session/AuthUserContext'
-import withAuthorization from '../Session/withAuthorization'
+import withAuthorization from '../Auth/Session/withAuthorization'
 
-class HomePage extends Component {
-
-  render () {
-    return (
-      <AuthUserContext.Consumer>
-        {authUser =>
-          <Heading is='h3'>Welcome, {authUser.email}</Heading>
-        }
-      </AuthUserContext.Consumer>
-    )
-  }
-}
+const HomePage = ({email}) =>
+    <Heading is='h3'>Welcome, {email}</Heading>
 
 export default withAuthorization()(HomePage)

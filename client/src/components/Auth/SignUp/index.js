@@ -23,7 +23,8 @@ const INITIAL_STATE = {
   email: '',
   passwordOne: '',
   passwordTwo: '',
-  error: null
+  error: null,
+  busy: false
 }
 
 class SignUpForm extends Component {
@@ -35,22 +36,25 @@ class SignUpForm extends Component {
     const {email, passwordOne} = this.state
     const {history} = this.props
 
+    this.setState({busy: true})
+
     try {
       await auth.createUserWithEmailAndPassword(email, passwordOne)
       this.setState(() => ({...INITIAL_STATE}))
       history && history.push(routes.HOME)
     } catch (error) {
-      this.setState({error})
+      this.setState({error, busy: false})
     }
   }
 
+  _isValid = () =>
+    this.state.email !== '' &&
+    this.state.passwordOne !== '' &&
+    this.state.passwordOne === this.state.passwordTwo &&
+    this.state.passwordOne.length > 5
+
   render () {
-    const {email, passwordOne, passwordTwo, error} = this.state
-    const isInvalid =
-            passwordOne !== passwordTwo ||
-            passwordOne === '' ||
-            email === '' ||
-            passwordOne.length < 6
+    const {email, passwordOne, passwordTwo, error, busy} = this.state
 
     return (
       <form onSubmit={this._onSubmit}>
@@ -60,6 +64,7 @@ class SignUpForm extends Component {
           onChange={event => this.setState({email: event.target.value})}
           type='text'
           placeholder='Email Address'
+          name='email'
         />
         <Input
           mb={3}
@@ -75,7 +80,8 @@ class SignUpForm extends Component {
           type='password'
           placeholder='Confirm Password'
         />
-        <Button disabled={isInvalid} type='submit'>
+
+        <Button disabled={!this._isValid() || busy} type='submit'>
           Sign Up
         </Button>
 

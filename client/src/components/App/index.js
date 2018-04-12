@@ -7,12 +7,13 @@ import { normalize } from 'styled-normalize'
 import Navigation from '../Navigation'
 import SignUpPage from '../Auth/SignUp'
 import SignInPage from '../Auth/SignIn'
-import PasswordForgetPage from '../Auth/Forgot'
+import PasswordForgetPage from '../Auth/Password/Forgot'
 import HomePage from '../Home'
-import UsersPage from '../Auth/Create/index'
+import UsersPage from '../Auth/Users/index'
 import AccountPage from '../Account'
 import NoMatchPage from '../NoMatch'
-import withAuthentication from '../Session/withAuthentication'
+import Loading from '../Loading'
+import withAuthentication from '../Auth/Session/withAuthentication'
 import theme from '../../theme'
 import * as routes from '../../constants/routes'
 
@@ -37,11 +38,10 @@ injectGlobal`
   }
 `
 
-const App = () =>
+const Loaded = () =>
   <Router>
-    <Provider theme={theme}>
+    <React.Fragment>
       <Navigation />
-
       <Switch>
         <Route strict exact path={routes.HOME} component={HomePage} />
         <Route strict path={routes.ACCOUNT} component={AccountPage} />
@@ -51,8 +51,15 @@ const App = () =>
         <Route strict path={routes.FORGOT} component={PasswordForgetPage} />
         <Route component={NoMatchPage} />
       </Switch>
-
-    </Provider>
+    </React.Fragment>
   </Router>
+
+const App = ({loaded}) =>
+  <Provider theme={theme}>
+    {!loaded
+      ? <Loading>Loading...</Loading>
+      : <Loaded />
+    }
+  </Provider>
 
 export default withAuthentication(App)

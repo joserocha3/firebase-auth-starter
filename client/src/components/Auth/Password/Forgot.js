@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { Button, Input, Text } from 'rebass'
 
-import { PageWrapper } from '../'
+import { PageWrapper } from '../index'
 import { auth } from '../../../firebase/index'
 import * as routes from '../../../constants/routes'
 
@@ -21,37 +21,45 @@ const Footer = () =>
 
 const INITIAL_STATE = {
   email: '',
-  error: null
+  error: null,
+  busy: false
 }
 
 class ForgotForm extends Component {
   state = {...INITIAL_STATE}
 
-  onSubmit = (event) => {
+  _onSubmit = async (event) => {
+    event.preventDefault()
+
     const {email} = this.state
 
-    auth.passwordReset(email)
-      .then(() => this.setState({...INITIAL_STATE}))
-      .catch(error => this.setState({error}))
+    this.setState({busy: true})
 
-    event.preventDefault()
+    try {
+      await auth.passwordReset(email)
+      this.setState({...INITIAL_STATE})
+    } catch (error) {
+      this.setState({error, busy: false})
+    }
   }
 
+  _isValid = () => this.state.email !== ''
+
   render () {
-    const {email, error} = this.state
-    const isInvalid = email === ''
+    const {email, error, busy} = this.state
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form onSubmit={this._onSubmit}>
         <Input
           mb={3}
-          value={this.state.email}
+          value={email}
           onChange={event => this.setState({email: event.target.value})}
           type='text'
           placeholder='Email Address'
+          name='email'
         />
 
-        <Button disabled={isInvalid} type='submit'>
+        <Button disabled={!this._isValid() || busy} type='submit'>
           Reset My Password
         </Button>
 
