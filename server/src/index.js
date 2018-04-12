@@ -105,13 +105,23 @@ exports.assignRole = functions.https.onCall(async (data, context) => {
     throw new functions.https.HttpsError('failed-precondition', 'You cannot change your own role.')
   }
 
-  // Now assign the role
+  // Assign the role
 
   try {
     await admin.auth().setCustomUserClaims(data.uid, {[data.role]: true})
   } catch (error) {
     console.error(error)
     throw new functions.https.HttpsError('unknown', 'Failed to assign user role.')
+  }
+
+  // Update user collection
+
+  try {
+    await admin.firestore().collection('users').doc(data.uid).update({
+      role: data.role
+    })
+  } catch (error) {
+    throw new functions.https.HttpsError('unknown', 'Failed to update user collection.')
   }
 
   return {

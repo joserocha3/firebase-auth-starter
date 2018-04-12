@@ -5,7 +5,7 @@ import { Box, Heading, Text } from 'rebass'
 import { SelectRole } from './'
 import { assignRole } from '../../../firebase/auth'
 
-// TODO: in functions update user collection at end of assignRole
+// TODO: make users either accept one or two roles ONLY
 
 class UserItem extends Component {
   state = {
@@ -14,7 +14,7 @@ class UserItem extends Component {
   }
 
   _assignRole = async (uid, role) => {
-    this.setState({busy: true})
+    this.setState({error: '', busy: true})
 
     try {
       await assignRole(uid, role)
