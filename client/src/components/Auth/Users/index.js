@@ -9,13 +9,16 @@ class UsersPage extends Component {
     users: {}
   }
 
-  async componentDidMount () {
-    try {
-      const users = await db.getAllUsers()
-      this.setState({users})
-    } catch (error) {
-      console.log(error)
-    }
+  unsubscribeToUsers = null
+
+  _setUsers = (users) => this.setState({users})
+
+  componentDidMount () {
+    this.unsubscribeToUsers = db.subscribeToUsers(this._setUsers)
+  }
+
+  componentWillUnmount () {
+    this.unsubscribeToUsers()
   }
 
   render () {

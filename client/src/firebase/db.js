@@ -2,16 +2,27 @@ import { db } from './firebase'
 
 // User API
 
-export const getAllUsers = async () =>
-  await getCollection('users')
+export const subscribeToUsers = (onUpdate) =>
+  subscribeToCollection('users', onUpdate)
+
+export const subscribeToCollection = (collection, onUpdate) => {
+  return db.collection(collection).onSnapshot((query) => {
+    const data = []
+
+    query.forEach(doc =>
+      data[doc.id] = {...doc.data()}
+    )
+
+    onUpdate(data)
+  })
+}
 
 export const getCollection = async collection => {
   const data = []
 
   try {
     const query = await db.collection(collection).get()
-    if (!query) return []
-    query.forEach(doc =>
+    !!query && query.forEach(doc =>
       data[doc.id] = {...doc.data()}
     )
   } catch (error) {
