@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Button, Heading, Input, Select, Text } from 'rebass'
+import { Box, Button, Heading, Input, Select, Text } from 'rebass'
 
 import withAuthorization from '../Session/withAuthorization'
 import { auth, db } from '../../../firebase/index'
@@ -9,10 +9,13 @@ class UsersPage extends Component {
     users: {}
   }
 
-  componentDidMount () {
-    db.getAllUsers().then(users =>
-      this.setState(() => ({users}))
-    )
+  async componentDidMount () {
+    try {
+      const users = await db.getAllUsers()
+      this.setState({users})
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   render () {
@@ -20,7 +23,7 @@ class UsersPage extends Component {
 
     return (
       <React.Fragment>
-        {!!users && <UserList users={users} />}
+        <UserList users={users} />
         <UserCreate />
       </React.Fragment>
     )
@@ -30,11 +33,15 @@ class UsersPage extends Component {
 const UserList = ({users}) =>
   <React.Fragment>
     <Heading mb={3}>Existing Users</Heading>
-    {Object.keys(users).map(key =>
-      <React.Fragment key={key}>
-        <Text>{users[key].email}</Text>
-      </React.Fragment>
-    )}
+    {!users.keys
+      ? <Text>Loading...</Text>
+      : Object.keys(users).map(key =>
+        <Box key={key} mb={3}>
+          <Text mb={3}>{users[key].email}</Text>
+          <SelectRole value={users[key].role || ''} onChange={() => null} />
+        </Box>
+      )
+    }
   </React.Fragment>
 
 const UserCreate = () =>

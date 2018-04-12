@@ -2,9 +2,8 @@ import { db } from './firebase'
 
 // User API
 
-export const getAllUsers = async () => {
-  return await getCollection('users')
-}
+export const getAllUsers = async () =>
+  await getCollection('users')
 
 export const getCollection = async collection => {
   const data = []
