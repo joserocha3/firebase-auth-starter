@@ -1,0 +1,7 @@
+type Query {
+  user(id: String!): User
+  users: [User]
+  task(id: String!): Task
+  tasks: [Task]
+  tasksByUser(id: String!): [Task]
+}

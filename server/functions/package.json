@@ -7,6 +7,7 @@
     "firebase-admin": "^5.12.0",
     "firebase-functions": "^1.0.1",
     "graphql": "^0.11.7",
+    "graphql-playground-html": "^1.5.6",
     "graphql-tools": "^2.2.1",
     "graphql-yoga": "^1.8.5"
   }

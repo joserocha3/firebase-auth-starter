@@ -12,10 +12,10 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-plugin-inline-import": "^2.0.6",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-env": "^1.6.1",
-    "rimraf": "^2.6.2",
-    "sort-package-json": "^1.7.1"
+    "rimraf": "^2.6.2"
   }
 }

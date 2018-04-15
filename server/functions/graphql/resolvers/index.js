@@ -1,12 +1,17 @@
+import users from './users'
+import tasks from './tasks'
+
 const admin = require('firebase-admin')
 
 admin.initializeApp()
 
-const getCollection = async (collection) => {
+const getCollection = async (collection, condition) => {
   const data = []
 
   try {
-    const query = await admin.firestore().collection(collection).get()
+    const query = condition
+      ? await admin.firestore().collection(collection).where(condition[0], condition[1], condition[2]).get()
+      : await admin.firestore().collection(collection).get()
     !!query && query.forEach(doc => {
       data.push({
         id: doc.id,
@@ -50,32 +55,17 @@ const getDocument = async (collection, id) => {
   return data
 }
 
-const tasksByUser = async (id) => {
-  const data = []
-
-  try {
-    const query = await admin.firestore().collection('tasks').where('createdBy', '==', id).get()
-    !!query && query.forEach(doc =>
-      data.push({
-        id: doc.id,
-        ...doc.data()
-      })
-    )
-  } catch (error) {
-    console.log(error)
-  }
-
-  return data
-}
-
 const resolveFunctions = {
   Query: {
-    user: async (_, {id}) => await getDocument('users', id),
-    users: async () => await getCollection('users'),
-    task: async (_, {id}) => getDocument('tasks', id),
-    tasks: async () => await getCollection('tasks'),
-    tasksByUser: async (_, {id}) => await tasksByUser(id)
+    ...users,
+    ...tasks
   }
 }
 
 export default resolveFunctions
+
+export {
+  admin,
+  getCollection,
+  getDocument
+}
