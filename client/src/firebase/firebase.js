@@ -12,21 +12,21 @@ import '@firebase/functions'
 // }
 
 const prodConfig = {
-  apiKey: 'AIzaSyDEb7X812dlvtc0OXVf_ncdm57-7klMH98',
-  authDomain: 'ddd-dashboard.firebaseapp.com',
-  databaseURL: 'https://ddd-dashboard.firebaseio.com',
-  projectId: 'ddd-dashboard',
-  storageBucket: 'ddd-dashboard.appspot.com',
-  messagingSenderId: '889077039754'
+  apiKey: "AIzaSyDhp15_KmZly9R1VOEAY6DCbnW4oc7MJ-M",
+  authDomain: "fb-auth-starter.firebaseapp.com",
+  databaseURL: "https://fb-auth-starter.firebaseio.com",
+  projectId: "fb-auth-starter",
+  storageBucket: "fb-auth-starter.appspot.com",
+  messagingSenderId: "834237451631"
 }
 
 const devConfig = {
-  apiKey: 'AIzaSyDEb7X812dlvtc0OXVf_ncdm57-7klMH98',
-  authDomain: 'ddd-dashboard.firebaseapp.com',
-  databaseURL: 'https://ddd-dashboard.firebaseio.com',
-  projectId: 'ddd-dashboard',
-  storageBucket: 'ddd-dashboard.appspot.com',
-  messagingSenderId: '889077039754'
+  apiKey: "AIzaSyDhp15_KmZly9R1VOEAY6DCbnW4oc7MJ-M",
+  authDomain: "fb-auth-starter.firebaseapp.com",
+  databaseURL: "https://fb-auth-starter.firebaseio.com",
+  projectId: "fb-auth-starter",
+  storageBucket: "fb-auth-starter.appspot.com",
+  messagingSenderId: "834237451631"
 }
 
 const config = process.env.NODE_ENV === 'production'

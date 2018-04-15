@@ -15,6 +15,7 @@ const NavigationAuth = ({admin}) =>
   <Tabs mb={3}>
     <Item to={routes.HOME}>Home</Item>
     <Item to={routes.ACCOUNT}>Account</Item>
+    <Item to={routes.TASKS}>Tasks</Item>
     {admin && <Item to={routes.USERS}>Users</Item>}
     <SignOutButton ml='auto' />
   </Tabs>

@@ -25,8 +25,24 @@ export const createUser = async (email, password, role) => {
   }
 }
 
+export const deleteUser = async (uid) => {
+  try {
+    if (auth.currentUser.uid === uid) {
+      throw 'You cannot delete your own user.'
+    }
+    const call = await functions.httpsCallable('deleteUser')
+    return await call({uid})
+  } catch (error) {
+    console.error(error)
+    throw new Error(error)
+  }
+}
+
 export const assignRole = async (uid, role) => {
   try {
+    if (auth.currentUser.uid === uid) {
+      throw 'You cannot change your own role.'
+    }
     const call = await functions.httpsCallable('assignRole')
     return await call({uid, role})
   } catch (error) {

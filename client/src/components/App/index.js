@@ -5,12 +5,13 @@ import { injectGlobal } from 'styled-components'
 import { normalize } from 'styled-normalize'
 
 import Navigation from '../Navigation'
+import HomePage from '../Home'
+import AccountPage from '../Account'
+import TasksPage from '../Tasks'
+import UsersPage from '../Auth/Users'
 import SignUpPage from '../Auth/SignUp'
 import SignInPage from '../Auth/SignIn'
 import PasswordForgetPage from '../Auth/Password/Forgot'
-import HomePage from '../Home'
-import UsersPage from '../Auth/Users/index'
-import AccountPage from '../Account'
 import NoMatchPage from '../NoMatch'
 import Loading from '../Loading'
 import withAuthentication from '../Auth/Session/withAuthentication'
@@ -46,6 +47,7 @@ const Loaded = () =>
         <Route strict exact path={routes.HOME} component={HomePage} />
         <Route strict path={routes.ACCOUNT} component={AccountPage} />
         <Route strict path={routes.USERS} component={UsersPage} />
+        <Route strict path={routes.TASKS} component={TasksPage} />
         <Route strict path={routes.SIGN_UP} component={SignUpPage} />
         <Route strict path={routes.LOGIN} component={SignInPage} />
         <Route strict path={routes.FORGOT} component={PasswordForgetPage} />

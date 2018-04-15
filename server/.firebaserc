@@ -1,7 +1,7 @@
 {
   "projects": {
-    "default": "ddd-dashboard",
-    "dev": "ddd-dashboard",
-    "prod": "ddd-dashboard"
+    "default": "fb-auth-starter",
+    "dev": "fb-auth-starter",
+    "prod": "fb-auth-starter"
   }
 }

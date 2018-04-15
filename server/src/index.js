@@ -18,7 +18,7 @@ exports.syncUserCreate = functions.auth.user().onCreate(async (data) => {
   try {
     await admin.firestore().collection('users').doc(data.uid).set({
       email: data.email,
-      role: await getRole(data.uid)
+      role: await getRole(data.uid) || ''
     })
   } catch (error) {
     return console.error('Error writing document: ', error)
@@ -77,6 +77,45 @@ exports.createUser = functions.https.onCall(async (data, context) => {
   return {
     uid: user.uid,
     email: user.email
+  }
+})
+
+/*
+ *
+ * Delete a user
+ *
+ */
+exports.deleteUser = functions.https.onCall(async (data, context) => {
+
+  // Perform validations
+
+  if (!context || !context.auth || !context.auth.uid) {
+    throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.')
+  }
+
+  if (!data || !data.uid) {
+    throw new functions.https.HttpsError('failed-precondition', 'Please supply a user ID.')
+  }
+
+  if (!await isAdmin(context.auth.uid)) {
+    throw new functions.https.HttpsError('permission-denied', 'Only admins can delete users.')
+  }
+
+  if (data.uid === context.auth.uid) {
+    throw new functions.https.HttpsError('failed-precondition', 'You cannot delete your own user.')
+  }
+
+  // Now delete the user
+
+  try {
+    await admin.auth().deleteUser(data.uid)
+  } catch (error) {
+    console.error(error)
+    throw new functions.https.HttpsError('unknown', 'Failed to delete user.')
+  }
+
+  return {
+    uid: data.uid
   }
 })
 
@@ -147,8 +186,5 @@ const getRole = async (uid) => {
   )
 }
 
-const wait = (ms) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms)
-  })
-}
+const wait = (ms) =>
+  new Promise((resolve) => setTimeout(resolve, ms))

@@ -1,26 +1,26 @@
-import React, { Component } from 'react'
+import React from 'react'
 import { Button, Heading, Input, Select, Text } from 'rebass'
 
 import withAuthorization from '../Session/withAuthorization'
 import UserList from './UserList'
 import { auth, db } from '../../../firebase/index'
 
-class UsersPage extends Component {
+class UsersPage extends React.PureComponent {
   state = {
     users: []
   }
 
-  unsubscribeToUsers = null
+  unsubscribe = null
 
   _setUsers = (users) =>
     this.setState({users})
 
   componentDidMount () {
-    this.unsubscribeToUsers = db.subscribeToUsers(this._setUsers)
+    this.unsubscribe = db.subscribeToUsers(this._setUsers)
   }
 
   componentWillUnmount () {
-    this.unsubscribeToUsers()
+    this.unsubscribe()
   }
 
   render () {
@@ -60,7 +60,7 @@ const INITIAL_STATE = {
   busy: false
 }
 
-class CreateForm extends Component {
+class CreateForm extends React.PureComponent {
   state = {...INITIAL_STATE}
 
   _onSubmit = async (event) => {
@@ -68,7 +68,7 @@ class CreateForm extends Component {
 
     const {email, passwordOne, role} = this.state
 
-    this.setState({busy: true})
+    this.setState({error: null, busy: true})
 
     try {
       await auth.createUser(email, passwordOne, role)
@@ -119,7 +119,7 @@ class CreateForm extends Component {
         />
 
         <Button mt={3} disabled={!this._isValid() || busy} type='submit'>
-          Sign Up
+          Create
         </Button>
 
         {error && <Text mt={3} color='error'>{error.message}</Text>}
