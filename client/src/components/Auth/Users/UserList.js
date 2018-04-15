@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Box, Button, Heading, Text } from 'rebass'
+import { gql } from 'apollo-boost'
+import { Query } from 'react-apollo'
 
 import { SelectRole } from './'
 import { assignRole, deleteUser } from '../../../firebase/auth'
@@ -14,11 +16,11 @@ class UserItem extends Component {
     deleted: false
   }
 
-  _deleteUser = async (uid) => {
+  _deleteUser = async (id) => {
     this.setState({error: null, busy: true})
 
     try {
-      await deleteUser(uid)
+      await deleteUser(id)
       this.setState({deleted: true})
     } catch (error) {
       this.setState({error})
@@ -27,11 +29,11 @@ class UserItem extends Component {
     }
   }
 
-  _assignRole = async (uid, role) => {
+  _assignRole = async (id, role) => {
     this.setState({error: null, busy: true, tempRole: role})
 
     try {
-      await assignRole(uid, role)
+      await assignRole(id, role)
     } catch (error) {
       this.setState({error})
     } finally {
@@ -42,7 +44,7 @@ class UserItem extends Component {
 
   render () {
     const {error, busy, tempRole, deleted} = this.state
-    const {user: {uid, role, email}} = this.props
+    const {user: {id, role, email}} = this.props
 
     const disabled = busy || deleted
 
@@ -52,12 +54,12 @@ class UserItem extends Component {
         <SelectRole
           disabled={disabled}
           value={busy ? tempRole : role}
-          onChange={(event) => this._assignRole(uid, event.target.value)}
+          onChange={(event) => this._assignRole(id, event.target.value)}
         />
         {!!error && <Text color='red'>{error.message}</Text>}
         <Button
           mt={3}
-          onClick={() => this._deleteUser(uid)}
+          onClick={() => this._deleteUser(id)}
           disabled={disabled}>
           Delete
         </Button>
@@ -66,16 +68,29 @@ class UserItem extends Component {
   }
 }
 
-const UserList = ({users}) =>
+const UserList = () =>
   <React.Fragment>
     <Heading mb={3}>Existing Users</Heading>
-    {!users.keys
-      ? <Text>Loading...</Text>
-      : Object.keys(users).map(key =>
-        <UserItem key={key} user={users[key]} />
-      )
-    }
+    <Query query={query}>
+      {({loading, error, data}) => {
+        if (loading) return <Text>Loading...</Text>
+        if (error) return <Text>Error :(</Text>
+        return data.users.map((user) =>
+          <UserItem key={user.id} user={user} />
+        )
+      }}
+    </Query>
   </React.Fragment>
+
+const query = gql`
+  {
+    users {
+      id
+      email
+      role
+    }
+  }
+`
 
 UserList.propTypes = {
   users: PropTypes.array

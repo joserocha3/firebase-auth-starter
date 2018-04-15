@@ -1,14 +1,13 @@
 # See https://help.github.com/ignore-files/ for more about ignoring files.
 
-src/**/*.css
+/client/src/**/*.css
 
 .env
 *.log
 **/*.log
 .DS_Store
 **/.DS_Store
-#server/functions
-server/dist
+/server/dist/
 **/node_modules
 coverage
 

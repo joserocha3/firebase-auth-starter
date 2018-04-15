@@ -1,29 +1,17 @@
 import bodyParser from 'body-parser'
 import express from 'express'
+import cors from 'cors'
 import { graphiqlExpress, graphqlExpress } from 'apollo-server-express'
 import { printSchema } from 'graphql/utilities/schemaPrinter'
-import { renderPlaygroundPage } from 'graphql-playground-html'
+import expressPlayground from 'graphql-playground-middleware-express'
 
 import schema from './schemas'
-
-const playgroundExpress = (options) => {
-  const middlewareOptions = {
-    ...options,
-    version: '1.5.6'
-  }
-
-  return (req, res, next) => {
-    res.setHeader('Content-Type', 'text/html')
-    const playground = renderPlaygroundPage(middlewareOptions)
-    res.write(playground)
-    res.end()
-    next()
-  }
-}
 
 const setupGraphQLServer = () => {
   // setup server
   const graphQLServer = express()
+
+  graphQLServer.use(cors())
 
   // /api/graphql
   graphQLServer.use(
@@ -41,7 +29,7 @@ const setupGraphQLServer = () => {
   // /api/playground
   graphQLServer.use(
     '/playground',
-    playgroundExpress({endpoint: 'graphql'})
+    expressPlayground({endpoint: 'graphql'})
   )
 
   // /api/schema

@@ -5,35 +5,11 @@ import withAuthorization from '../Auth/Session/withAuthorization'
 import TaskList from './TaskList'
 import { db } from '../../firebase'
 
-class TasksPage extends React.PureComponent {
-  state = {
-    tasks: []
-  }
-
-  unsubscribe = null
-
-  _setTasks = (tasks) =>
-    this.setState({tasks})
-
-  componentDidMount () {
-    this.unsubscribe = db.subscribeToTasks(this._setTasks)
-  }
-
-  componentWillUnmount () {
-    this.unsubscribe()
-  }
-
-  render () {
-    const {tasks} = this.state
-
-    return (
-      <React.Fragment>
-        <TaskList tasks={tasks} />
-        <TaskCreate />
-      </React.Fragment>
-    )
-  }
-}
+const TasksPage = () =>
+  <React.Fragment>
+    <TaskList />
+    <TaskCreate />
+  </React.Fragment>
 
 const TaskCreate = () =>
   <React.Fragment>
@@ -52,7 +28,7 @@ const INITIAL_STATE = {
 class CreateForm extends React.PureComponent {
   state = {...INITIAL_STATE}
 
-  componentDidMount(){
+  componentDidMount () {
     if (this.props.data) {
       this.setState({...this.props.data, button: 'Update'})
     }

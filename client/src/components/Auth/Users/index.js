@@ -3,37 +3,13 @@ import { Button, Heading, Input, Select, Text } from 'rebass'
 
 import withAuthorization from '../Session/withAuthorization'
 import UserList from './UserList'
-import { auth, db } from '../../../firebase/index'
+import { auth } from '../../../firebase/index'
 
-class UsersPage extends React.PureComponent {
-  state = {
-    users: []
-  }
-
-  unsubscribe = null
-
-  _setUsers = (users) =>
-    this.setState({users})
-
-  componentDidMount () {
-    this.unsubscribe = db.subscribeToUsers(this._setUsers)
-  }
-
-  componentWillUnmount () {
-    this.unsubscribe()
-  }
-
-  render () {
-    const {users} = this.state
-
-    return (
-      <React.Fragment>
-        <UserList users={users} />
-        <UserCreate />
-      </React.Fragment>
-    )
-  }
-}
+const UsersPage = () =>
+  <React.Fragment>
+    <UserList />
+    <UserCreate />
+  </React.Fragment>
 
 const UserCreate = () =>
   <React.Fragment>

@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 import { Provider } from 'rebass'
 import { injectGlobal } from 'styled-components'
 import { normalize } from 'styled-normalize'
+import { ApolloProvider, Query } from 'react-apollo'
+import ApolloClient, { gql } from 'apollo-boost'
 
 import Navigation from '../Navigation'
 import HomePage from '../Home'
@@ -56,12 +58,18 @@ const Loaded = () =>
     </React.Fragment>
   </Router>
 
+const client = new ApolloClient({
+  uri: 'http://localhost:5000/fb-auth-starter/us-central1/api/graphql'
+})
+
 const App = ({loaded}) =>
-  <Provider theme={theme}>
-    {!loaded
-      ? <Loading>Loading...</Loading>
-      : <Loaded />
-    }
-  </Provider>
+  <ApolloProvider client={client}>
+    <Provider theme={theme}>
+      {!loaded
+        ? <Loading>Loading...</Loading>
+        : <Loaded />
+      }
+    </Provider>
+  </ApolloProvider>
 
 export default withAuthentication(App)
