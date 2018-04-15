@@ -1,22 +1,21 @@
 {
-  "name": "functions",
+  "name": "firebase-auth-starter-server",
   "scripts": {
-    "serve": "yarn run prepare && firebase serve --only functions",
-    "shell": "firebase experimental:functions:shell",
-    "start": "npm run shell",
-    "deploy": "yarn run prepare && firebase deploy --only functions",
-    "logs": "firebase functions:log",
-    "prepare": "babel src --out-dir functions --copy-files --ignore node_modules"
-  },
-  "dependencies": {
-    "babel-runtime": "^6.26.0",
-    "firebase-admin": "^5.12.0",
-    "firebase-functions": "^1.0.1"
+    "predeploy": "yarn package:functions",
+    "deploy": "firebase deploy",
+    "postinstall": "cd functions && yarn",
+    "prepackage:functions": "rimraf \"dist/functions\"",
+    "package:functions": "babel \"functions\" --out-dir \"dist/functions\" --copy-files --ignore \"node_modules\"",
+    "postpackage:functions": "cd \"dist/functions\" && yarn",
+    "preserve": "yarn package:functions",
+    "serve": "firebase serve --only functions"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.6.1"
+    "babel-preset-env": "^1.6.1",
+    "rimraf": "^2.6.2",
+    "sort-package-json": "^1.7.1"
   }
 }

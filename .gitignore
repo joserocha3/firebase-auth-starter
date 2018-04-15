@@ -7,7 +7,8 @@ src/**/*.css
 **/*.log
 .DS_Store
 **/.DS_Store
-server/functions
+#server/functions
+server/dist
 **/node_modules
 coverage
 

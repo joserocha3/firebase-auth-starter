@@ -1,4 +1,4 @@
-const functions = require('firebase-functions')
+import { auth, https } from 'firebase-functions'
 const admin = require('firebase-admin')
 
 admin.initializeApp()
@@ -27,7 +27,7 @@ const roles = [
  * Sync auth user updates with user collection for quick real-time access via Firestore
  *
  */
-exports.syncUserCreate = functions.auth.user().onCreate(async (data) => {
+exports.syncUserCreate = auth.user().onCreate(async (data) => {
   await wait(5000) // wait for claims to be written
   try {
     await admin.firestore().collection('users').doc(data.uid).set({
@@ -39,7 +39,7 @@ exports.syncUserCreate = functions.auth.user().onCreate(async (data) => {
   }
 })
 
-exports.syncUserDelete = functions.auth.user().onDelete(async (data) => {
+exports.syncUserDelete = auth.user().onDelete(async (data) => {
   try {
     await admin.firestore().collection('users').doc(data.uid).delete()
   } catch (error) {
@@ -52,20 +52,20 @@ exports.syncUserDelete = functions.auth.user().onDelete(async (data) => {
  * Create a user
  *
  */
-exports.createUser = functions.https.onCall(async (data, context) => {
+exports.createUser = https.onCall(async (data, context) => {
 
   // Perform validations
 
   if (!context || !context.auth || !context.auth.uid) {
-    throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.')
+    throw new https.HttpsError('unauthenticated', 'The function must be called while authenticated.')
   }
 
   if (!data || !data.email || !data.password || !data.role || !roles.includes(data.role)) {
-    throw new functions.https.HttpsError('failed-precondition', 'Please supply an email address, password and valid role.')
+    throw new https.HttpsError('failed-precondition', 'Please supply an email address, password and valid role.')
   }
 
   if (!await isAdmin(context.auth.uid)) {
-    throw new functions.https.HttpsError('permission-denied', 'Only admins can create users.')
+    throw new https.HttpsError('permission-denied', 'Only admins can create users.')
   }
 
   // Now create the user
@@ -78,14 +78,14 @@ exports.createUser = functions.https.onCall(async (data, context) => {
     })
   } catch (error) {
     console.error(error)
-    throw new functions.https.HttpsError('unknown', 'Failed to create user.')
+    throw new https.HttpsError('unknown', 'Failed to create user.')
   }
 
   try {
     await admin.auth().setCustomUserClaims(user.uid, {active: true, [data.role]: true})
   } catch (error) {
     console.error(error)
-    throw new functions.https.HttpsError('unknown', 'Failed to assign user role.')
+    throw new https.HttpsError('unknown', 'Failed to assign user role.')
   }
 
   return {
@@ -99,24 +99,24 @@ exports.createUser = functions.https.onCall(async (data, context) => {
  * Delete a user
  *
  */
-exports.deleteUser = functions.https.onCall(async (data, context) => {
+exports.deleteUser = https.onCall(async (data, context) => {
 
   // Perform validations
 
   if (!context || !context.auth || !context.auth.uid) {
-    throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.')
+    throw new https.HttpsError('unauthenticated', 'The function must be called while authenticated.')
   }
 
   if (!data || !data.uid) {
-    throw new functions.https.HttpsError('failed-precondition', 'Please supply a user ID.')
+    throw new https.HttpsError('failed-precondition', 'Please supply a user ID.')
   }
 
   if (!await isAdmin(context.auth.uid)) {
-    throw new functions.https.HttpsError('permission-denied', 'Only admins can delete users.')
+    throw new https.HttpsError('permission-denied', 'Only admins can delete users.')
   }
 
   if (data.uid === context.auth.uid) {
-    throw new functions.https.HttpsError('failed-precondition', 'You cannot delete your own user.')
+    throw new https.HttpsError('failed-precondition', 'You cannot delete your own user.')
   }
 
   // Now delete the user
@@ -125,7 +125,7 @@ exports.deleteUser = functions.https.onCall(async (data, context) => {
     await admin.auth().deleteUser(data.uid)
   } catch (error) {
     console.error(error)
-    throw new functions.https.HttpsError('unknown', 'Failed to delete user.')
+    throw new https.HttpsError('unknown', 'Failed to delete user.')
   }
 
   return {
@@ -138,24 +138,24 @@ exports.deleteUser = functions.https.onCall(async (data, context) => {
  * Assign a role to a user
  *
  */
-exports.assignRole = functions.https.onCall(async (data, context) => {
+exports.assignRole = https.onCall(async (data, context) => {
 
   // Perform validations
 
   if (!context || !context.auth || !context.auth.uid) {
-    throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.')
+    throw new https.HttpsError('unauthenticated', 'The function must be called while authenticated.')
   }
 
   if (!data || !data.uid || !data.role || !roles.includes(data.role)) {
-    throw new functions.https.HttpsError('failed-precondition', 'Please supply a user id and valid role.')
+    throw new https.HttpsError('failed-precondition', 'Please supply a user id and valid role.')
   }
 
   if (!await isAdmin(context.auth.uid)) {
-    throw new functions.https.HttpsError('permission-denied', 'Only admins can assign roles.')
+    throw new https.HttpsError('permission-denied', 'Only admins can assign roles.')
   }
 
   if (data.uid === context.auth.uid) {
-    throw new functions.https.HttpsError('failed-precondition', 'You cannot change your own role.')
+    throw new https.HttpsError('failed-precondition', 'You cannot change your own role.')
   }
 
   // Assign the role
@@ -164,7 +164,7 @@ exports.assignRole = functions.https.onCall(async (data, context) => {
     await admin.auth().setCustomUserClaims(data.uid, {[data.role]: true})
   } catch (error) {
     console.error(error)
-    throw new functions.https.HttpsError('unknown', 'Failed to assign user role.')
+    throw new https.HttpsError('unknown', 'Failed to assign user role.')
   }
 
   // Update user collection
@@ -174,7 +174,7 @@ exports.assignRole = functions.https.onCall(async (data, context) => {
       role: data.role
     })
   } catch (error) {
-    throw new functions.https.HttpsError('unknown', 'Failed to update user collection.')
+    throw new https.HttpsError('unknown', 'Failed to update user collection.')
   }
 
   return {
