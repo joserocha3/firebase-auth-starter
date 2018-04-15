@@ -3,23 +3,25 @@ import { makeExecutableSchema } from 'graphql-tools'
 import resolvers from './resolvers'
 
 const schema = `
-type User {
-  uid: String!
-  role: String!
-  email: String!
-}
-type Task {
-  uid: String!
-  title: String!
-  description: String!
-  owner: User!
-}
-type Query {
-  user(uid: String!): User
-  users: [User]
-  task(uid: String!): Task
-  tasks: [Task]
-}
+  type User {
+    id: String!
+    role: String!
+    email: String!
+  }
+  type Task {
+    id: String!
+    title: String!
+    description: String!
+    createdBy: User
+    createdAt: String
+  }
+  type Query {
+    user(id: String!): User
+    users: [User]
+    task(id: String!): Task
+    tasks: [Task]
+    tasksByUser(id: String!): [Task]
+  }
 `
 
 export default makeExecutableSchema({
