@@ -3,6 +3,20 @@ const admin = require('firebase-admin')
 
 admin.initializeApp()
 
+// context example
+//
+// {
+//   eventId: '04ba9156-3d61-45eb-987c-47ac5adf42e1-0',
+//   timestamp: '2018-04-15T02:39:10.398991Z',
+//   eventType: 'google.firestore.document.create',
+//   resource:
+//     {
+//       service: 'firestore.googleapis.com',
+//       name: 'projects/fb-auth-starter/databases/(default)/documents/tasks/7wuAH5shlhjsdkugWfkd'
+//     },
+//   params: {uid: '7wuAH5shlhjsdkugWfkd'}
+// }
+
 const roles = [
   'admin',
   'client'

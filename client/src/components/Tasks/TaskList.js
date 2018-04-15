@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Box, Button, Heading, Text } from 'rebass'
 
+import { CreateForm } from './'
 import { db } from '../../firebase'
 
 class TaskItem extends Component {
@@ -26,13 +27,13 @@ class TaskItem extends Component {
 
   render () {
     const {error, busy, deleted} = this.state
-    const {task: {uid}} = this.props
+    const {task: {uid, title, description}} = this.props
 
     const disabled = busy || deleted
 
     return (
       <Box mb={3}>
-        <Text mb={3}>{uid}</Text>
+        <CreateForm data={{title, description}} />
         {!!error && <Text color='red'>{error.message}</Text>}
         <Button
           mt={3}

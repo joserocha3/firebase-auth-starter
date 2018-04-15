@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Heading, Input, Text } from 'rebass'
+import { Button, Heading, Input, Text, Textarea } from 'rebass'
 
 import withAuthorization from '../Auth/Session/withAuthorization'
 import TaskList from './TaskList'
@@ -15,7 +15,7 @@ class TasksPage extends React.PureComponent {
   _setTasks = (tasks) =>
     this.setState({tasks})
 
-  componentDidMount() {
+  componentDidMount () {
     this.unsubscribe = db.subscribeToTasks(this._setTasks)
   }
 
@@ -42,23 +42,31 @@ const TaskCreate = () =>
   </React.Fragment>
 
 const INITIAL_STATE = {
+  title: '',
   description: '',
   error: null,
-  busy: false
+  busy: false,
+  button: 'Create'
 }
 
 class CreateForm extends React.PureComponent {
   state = {...INITIAL_STATE}
 
+  componentDidMount(){
+    if (this.props.data) {
+      this.setState({...this.props.data, button: 'Update'})
+    }
+  }
+
   _onSubmit = async (event) => {
     event.preventDefault()
 
-    const {description} = this.state
+    const {title, description} = this.state
 
     this.setState({error: null, busy: true})
 
     try {
-      await db.createTask(description)
+      await db.createTask(title, description)
       this.setState(() => ({...INITIAL_STATE}))
     } catch (error) {
       this.setState({error, busy: false})
@@ -66,14 +74,23 @@ class CreateForm extends React.PureComponent {
   }
 
   _isValid = () =>
+    this.state.title !== '' &&
     this.state.description !== ''
 
   render () {
-    const {description, error, busy} = this.state
+    const {title, description, error, busy, button} = this.state
 
     return (
       <form onSubmit={this._onSubmit}>
         <Input
+          mb={3}
+          value={title}
+          onChange={event => this.setState({title: event.target.value})}
+          type='title'
+          placeholder='Title'
+          name='title'
+        />
+        <Textarea
           mb={3}
           value={description}
           onChange={event => this.setState({description: event.target.value})}
@@ -83,7 +100,7 @@ class CreateForm extends React.PureComponent {
         />
 
         <Button mt={3} disabled={!this._isValid() || busy} type='submit'>
-          Create
+          {button}
         </Button>
 
         {error && <Text mt={3} color='error'>{error.message}</Text>}
@@ -93,3 +110,7 @@ class CreateForm extends React.PureComponent {
 }
 
 export default withAuthorization()(TasksPage)
+
+export {
+  CreateForm
+}

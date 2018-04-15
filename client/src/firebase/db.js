@@ -1,4 +1,4 @@
-import { db } from './firebase'
+import { auth, db } from './firebase'
 
 // User API
 
@@ -10,18 +10,32 @@ export const subscribeToUsers = (onUpdate) =>
 export const subscribeToTasks = (onUpdate) =>
   subscribeToCollection('tasks', onUpdate)
 
-export const createTask = (description) => {
-  db.collection('tasks').add({
-    description
-  })
-    .then(() => console.log('Document successfully written!'))
-    .catch((error) => console.error('Error writing document: ', error))
+export const createTask = async (title, description) => {
+  try {
+    if (!title) throw 'Title is required.'
+    if (!description) throw 'Description is required.'
+
+    return await db.collection('tasks').add({
+      title,
+      description,
+      createdBy: auth.currentUser.uid,
+      createdAt: new Date()
+    })
+  } catch (error) {
+    console.error(error)
+    throw new Error(error)
+  }
 }
 
-export const deleteTask = (uid) => {
-  db.collection('tasks').doc(uid).delete()
-    .then(() => console.log('Document successfully deleted!'))
-    .catch((error) => console.error('Error removing document: ', error))
+export const deleteTask = async (uid) => {
+  try {
+    if (!uid) throw 'ID is required.'
+    
+    return await db.collection('tasks').doc(uid).delete()
+  } catch (error) {
+    console.error(error)
+    throw new Error(error)
+  }
 }
 
 export const subscribeToCollection = (collection, onUpdate) => {
